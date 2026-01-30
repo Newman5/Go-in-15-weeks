@@ -57,7 +57,7 @@ export default async function(eleventyConfig) {
 			language: "en",
 			title: "Go Learning Log",
 			subtitle: "Learning Go in 15 weeks - progress reports and discoveries",
-			base: "https://example.com/",
+            base: "https://newman5.github.io/Go-in-15-weeks/",
 			author: {
 				name: "Learner"
 			}
@@ -104,11 +104,11 @@ export default async function(eleventyConfig) {
 
 		dir: {
 			input: "content",
-			includes: "../_includes",
-			data: "../_data",
+            includes: "_includes",
+            data: "_data",
 			output: "_site"
 		},
 
-		pathPrefix: "/",
+        pathPrefix: "/Go-in-15-weeks/",
 	};
 }

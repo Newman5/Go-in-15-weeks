@@ -136,7 +136,7 @@ date: $today
 tags:
   - summary
   - meta
-layout: post.njk
+layout: layouts/post.njk
 ---
 
 Summary of blog posts from **$month_name**.
