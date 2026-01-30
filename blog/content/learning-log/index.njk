@@ -14,7 +14,7 @@ eleventyNavigation:
 	{%- set posts = collections["learning-log"] | reverse -%}
 	{%- for post in posts %}
 		<li>
-			<a href="{{ post.url | url }}">{{ post.data.title }}</a>
+			<a href="{{ post.url }}">{{ post.data.title }}</a>
 			<time datetime="{{ post.date | dateFilter }}">{{ post.date | readableDate }}</time>
 		</li>
 	{%- endfor %}

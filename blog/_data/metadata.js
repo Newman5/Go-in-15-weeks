@@ -1,11 +1,11 @@
 export default {
-	url: "https://example.com/",
+	url: "https://newman5.github.io/Go-in-15-weeks/",
 	siteName: "Go Learning Log",
 	siteDescription: "Learning Go in 15 weeks - progress reports and discoveries",
 	author: {
 		name: "Learner",
 		email: "learner@example.com",
-		url: "https://example.com/about/"
+		url: "https://newman5.github.io/Go-in-15-weeks/about/"
 	},
 	nav: [
 		{

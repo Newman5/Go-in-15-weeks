@@ -109,5 +109,6 @@ export default async function(eleventyConfig) {
 			output: "_site"
 		},
 
+		pathPrefix: "/Go-in-15-weeks/",
 	};
 }
