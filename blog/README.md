@@ -27,6 +27,36 @@ npm run build
 
 Output is in `_site/`
 
+## Using the Blog CLI (Phase 1)
+
+Create and manage learning log posts with bash scripts:
+
+### Create a New Post
+
+```bash
+./blog-cli.sh new "Day 3: Functions and Errors"
+```
+
+This creates a dated post in `content/learning-log/` with front matter and opens it in your editor.
+
+### List Drafts
+
+```bash
+./blog-cli.sh drafts
+```
+
+Shows all posts in `content/drafts/` with word counts.
+
+### Set Your Editor
+
+By default, scripts open files in VS Code. To use a different editor:
+
+```bash
+export EDITOR=nano  # or vim, code, etc.
+```
+
+Add to `~/.bashrc` or `~/.zshrc` to make it permanent.
+
 ## Structure
 
 - `content/` - Blog posts and pages
