@@ -1,0 +1,35 @@
+---
+layout: layouts/base.njk
+---
+
+<article>
+	<h1>{{ title }}</h1>
+	<p class="post-meta">
+		<time datetime="{{ page.date | dateFilter }}">
+			{{ page.date | readableDate }}
+		</time>
+	</p>
+
+	{% if tags %}
+		<p class="post-tags">
+			{% for tag in tags %}
+				{% if tag !== "learning-log" %}
+					<a href="/tags/{{ tag | slugify }}/">#{{ tag }}</a>
+				{% endif %}
+			{% endfor %}
+		</p>
+	{% endif %}
+
+	{{ content | safe }}
+
+	{% if previousPost or nextPost %}
+		<nav class="post-nav">
+			{% if previousPost %}
+				<a href="{{ previousPost.url | url }}" class="prev">← {{ previousPost.data.title }}</a>
+			{% endif %}
+			{% if nextPost %}
+				<a href="{{ nextPost.url | url }}" class="next">{{ nextPost.data.title }} →</a>
+			{% endif %}
+		</nav>
+	{% endif %}
+</article>

@@ -1,0 +1,21 @@
+---
+layout: layouts/base.njk
+title: Learning Log
+eleventyNavigation:
+  key: Learning Log
+  order: 2
+---
+
+<h1>{{ title }}</h1>
+
+<p>Periodic reports on my Go learning journey.</p>
+
+<ul>
+	{%- set posts = collections["learning-log"] | reverse -%}
+	{%- for post in posts %}
+		<li>
+			<a href="{{ post.url | url }}">{{ post.data.title }}</a>
+			<time datetime="{{ post.date | dateFilter }}">{{ post.date | readableDate }}</time>
+		</li>
+	{%- endfor %}
+</ul>
