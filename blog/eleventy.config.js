@@ -111,5 +111,3 @@ export default async function(eleventyConfig) {
 
 	};
 }
-https://newman5.github.io/learning-log/2026-01-30-week-1/
-https://newman5.github.io/Go-in-15-weeks/learning-log/2026-01-30-week-1/
