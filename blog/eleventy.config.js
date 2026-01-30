@@ -57,7 +57,7 @@ export default async function(eleventyConfig) {
 			language: "en",
 			title: "Go Learning Log",
 			subtitle: "Learning Go in 15 weeks - progress reports and discoveries",
-            base: "https://newman5.github.io/Go-in-15-weeks/",
+            base: "https://newman5.github.io/",
 			author: {
 				name: "Learner"
 			}
@@ -109,5 +109,6 @@ export default async function(eleventyConfig) {
 			output: "_site"
 		},
 
+		pathPrefix: "/Go-in-15-weeks/",
 	};
 }
