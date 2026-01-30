@@ -38,4 +38,26 @@
 
 ---
 
+**Day 3 — Structs, Pointers, and Slice Mutation**
+
+* A `struct` type defines a data shape; a struct value allocates memory and holds concrete data.
+* Struct values are created using **struct literals** (e.g. `Book{}`, `Book{Field: value}`).
+* A **literal** is a value written directly in code; struct literals are composite literals.
+* Passing a struct to a function copies the entire value.
+* Passing a pointer to a struct (`*T`) allows the function to modify the original value.
+* `&x` produces the address of a value; `*T` is a type that can store such an address.
+* Go automatically dereferences struct pointers for field access (`p.Field` works for `*p`).
+* `for ... range` assigns values by position, not variable name.
+* In `for i, v := range slice`, `i` is the index and `v` is a copy of the element.
+* Modifying the `range` value (`v`) does not modify the slice.
+* To mutate slice elements, iterate by index: `for i := range slice { slice[i] = ... }`.
+* A slice value is a small descriptor (pointer, length, capacity) that refers to an underlying array.
+* Passing a slice to a function copies the descriptor, but both copies refer to the same array.
+* Modifying slice elements via `slice[i]` affects the original data without using pointers.
+* A pointer to a slice (`*[]T`) is only needed to change the slice itself (length/capacity), not its elements.
+* Idiomatic Go prefers `[]T` over `*[]T` unless structural slice changes are required.
+
+---
+
+
 
