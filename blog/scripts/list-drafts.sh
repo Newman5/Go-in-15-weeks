@@ -44,7 +44,7 @@ if [ -z "$drafts" ]; then
   echo "No drafts found in $drafts_dir"
   echo ""
   echo "Create a new draft by saving a post in content/drafts/"
-  echo "Or create one with: ./scripts/new-post.sh \"My Draft Title\" --draft"
+  echo "Or create one with: ./blog/scripts/new-post.sh \"My Draft Title\" --draft"
   exit 0
 fi
 

@@ -7,12 +7,139 @@
 		<meta name="description" content="{{ description or metadata.siteDescription }}">
 		<link rel="canonical" href="{{ page.url | url }}">
 		<link rel="alternate" href="/feed/feed.xml" type="application/atom+xml" title="Feed">
-		<link rel="stylesheet" href="/css/style.css">
+		
+		<!-- Minimal inline CSS for clean, readable layout -->
+		<style>
+			/* Basic reset and layout */
+			body {
+				font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+				line-height: 1.6;
+				max-width: 800px;
+				margin: 0 auto;
+				padding: 20px;
+				color: #333;
+			}
+			
+			/* Header styles */
+			header {
+				border-bottom: 2px solid #333;
+				margin-bottom: 40px;
+				padding-bottom: 20px;
+			}
+			
+			header h1 {
+				margin: 0;
+				font-size: 2em;
+			}
+			
+			header h1 a {
+				color: inherit;
+				text-decoration: none;
+			}
+			
+			nav {
+				margin-top: 10px;
+			}
+			
+			nav ul {
+				list-style: none;
+				padding: 0;
+				margin: 0;
+				display: flex;
+				gap: 20px;
+				flex-wrap: wrap;
+			}
+			
+			nav a {
+				color: #3b82f6;
+				text-decoration: none;
+			}
+			
+			nav a:hover {
+				text-decoration: underline;
+				color: #2563eb;
+			}
+			
+			nav a[aria-current="page"] {
+				color: #1e40af;
+				font-weight: 600;
+			}
+			
+			/* Main content area */
+			main {
+				min-height: 400px;
+			}
+			
+			/* Footer styles */
+			footer {
+				margin-top: 60px;
+				padding-top: 20px;
+				border-top: 1px solid #ccc;
+				color: #666;
+				font-size: 0.9em;
+			}
+			
+			/* Link styles */
+			a {
+				color: #3b82f6;
+			}
+			
+			a:hover {
+				color: #2563eb;
+			}
+			
+			/* Code blocks */
+			pre {
+				background: #f4f4f4;
+				padding: 15px;
+				overflow-x: auto;
+				border-radius: 5px;
+			}
+			
+			code {
+				background: #f4f4f4;
+				padding: 2px 6px;
+				border-radius: 3px;
+				font-family: 'Monaco', 'Courier New', monospace;
+			}
+			
+			pre code {
+				background: transparent;
+				padding: 0;
+			}
+			
+			/* Post lists */
+			ul {
+				list-style: none;
+				padding: 0;
+			}
+			
+			ul li {
+				margin-bottom: 15px;
+			}
+			
+			.date {
+				color: #666;
+				font-size: 0.9em;
+				margin-left: 10px;
+			}
+			
+			/* Headings */
+			h1, h2, h3, h4, h5, h6 {
+				margin-top: 1.5em;
+				margin-bottom: 0.5em;
+				line-height: 1.2;
+			}
+			
+			h1 { font-size: 2.5em; }
+			h2 { font-size: 2em; }
+			h3 { font-size: 1.5em; }
+		</style>
 	</head>
 	<body>
 		<header>
+			<h1><a href="/">{{ metadata.siteName }}</a></h1>
 			<nav>
-				<h1><a href="/">{{ metadata.siteName }}</a></h1>
 				<ul>
 					{% for item in metadata.nav %}
 						<li><a href="{{ item.url | url }}" {% if item.url == page.url %}aria-current="page"{% endif %}>{{ item.title }}</a></li>
@@ -26,7 +153,7 @@
 		</main>
 
 		<footer>
-			<p>&copy; {{ year }} {{ metadata.author.name }}</p>
+			<p>Built with <a href="https://www.11ty.dev/">Eleventy</a> &mdash; Learning Go in 15 weeks</p>
 		</footer>
 	</body>
 </html>

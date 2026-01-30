@@ -7,6 +7,12 @@
 # It can be run interactively (menu mode) or with direct commands.
 
 # ============================================
+# SETUP - Change to script directory
+# ============================================
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$SCRIPT_DIR"
+
+# ============================================
 # COLOR VARIABLES
 # ============================================
 RED='\033[0;31m'
@@ -84,7 +90,12 @@ execute_new_post() {
       sleep 1
       return
     fi
-    ./blog/scripts/new-post.sh "$post_title"
+    read -p "Create as draft? (y/n): " create_draft
+    draft_flag=""
+    if [ "$create_draft" = "y" ] || [ "$create_draft" = "Y" ]; then
+      draft_flag="--draft"
+    fi
+    ./blog/scripts/new-post.sh "$post_title" $draft_flag
     handle_error $? || continue
     break
   done
@@ -244,6 +255,17 @@ execute_deploy() {
   pause_for_user
 }
 
+execute_tests() {
+  while true; do
+    echo -e "${BOLD}Run Blog Smoke Tests${RESET}"
+    echo ""
+    ./blog/scripts/test-blog.sh
+    handle_error $? || continue
+    break
+  done
+  pause_for_user
+}
+
 # ============================================
 # INTERACTIVE MENU
 # ============================================
@@ -268,6 +290,9 @@ show_menu() {
   echo "  11) 🖥️  Start dev server"
   echo "  12) 🌐 Deploy to production"
   echo ""
+  echo -e "${CYAN}${BOLD}🧪 TESTING${RESET}"
+  echo "  13) ✅ Run blog smoke tests"
+  echo ""
   echo -e "${YELLOW}${BOLD}OTHER${RESET}"
   echo "  0) 👋 Exit"
   echo ""
@@ -277,7 +302,7 @@ show_menu() {
 interactive_menu() {
   while true; do
     show_menu
-    read -p "Enter your choice (0-12): " choice
+    read -p "Enter your choice (0-13): " choice
     echo ""
     
     case $choice in
@@ -293,12 +318,13 @@ interactive_menu() {
       10) execute_build ;;
       11) execute_dev ;;
       12) execute_deploy ;;
+      13) execute_tests ;;
       0)
         echo -e "${GREEN}👋 Goodbye!${RESET}"
         exit 0
         ;;
       *)
-        echo -e "${RED}Invalid choice. Please enter a number between 0-12.${RESET}"
+        echo -e "${RED}Invalid choice. Please enter a number between 0-13.${RESET}"
         sleep 2
         ;;
     esac
@@ -320,7 +346,7 @@ show_help() {
   echo "  Run without arguments to launch interactive menu"
   echo ""
   echo "Direct Commands:"
-  echo "  new <title>              Create a new blog post"
+  echo "  new <title> [--draft]    Create a new blog post (optionally as draft)"
   echo "  link <url> [description] Create a link blog post"
   echo "  drafts                   List all draft posts"
   echo "  edit <slug>              Edit a draft by its slug"
@@ -332,6 +358,7 @@ show_help() {
   echo "  build                    Build the site"
   echo "  dev                      Start development server"
   echo "  deploy                   Deploy to production"
+  echo "  test                     Run blog smoke tests"
   echo ""
 }
 
@@ -345,8 +372,8 @@ if [ -z "$command" ]; then
   interactive_menu
 else
   case "$command" in
-    new) ./blog/scripts/new-post.sh "$2" ;;
-    link) ./blog/scripts/new-link-post.sh "$2" "$3" ;;
+    new) ./blog/scripts/new-post.sh "${@:2}" ;;
+    link) ./blog/scripts/new-link-post.sh "${@:2}" ;;
     drafts) ./blog/scripts/list-drafts.sh ;;
     edit) ./blog/scripts/edit-draft.sh "$2" ;;
     publish) ./blog/scripts/publish-draft.sh "$2" ;;
@@ -357,6 +384,7 @@ else
     build) (cd blog && npm run build) ;;
     dev) (cd blog && npm start) ;;
     deploy) echo "Deploy command not configured yet" ;;
+    test) ./blog/scripts/test-blog.sh ;;
     --help|-h|help) show_help ;;
     *)
       echo "Error: Unknown command '$command'"

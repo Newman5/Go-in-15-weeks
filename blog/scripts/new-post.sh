@@ -10,10 +10,41 @@
 # 4. Open it in your editor
 
 # ============================================
-# GET THE TITLE
+# PARSE ARGUMENTS
 # ============================================
-# $1 is the first argument passed to this script
-title="$1"
+# Supports:
+#   --draft / -d  Create a draft in content/drafts
+#   --help / -h   Show usage
+
+draft=false
+title=""
+
+show_usage() {
+  echo "Usage: $0 \"Post Title\" [--draft]"
+  echo ""
+  echo "Examples:"
+  echo "  $0 \"Day 3: Functions and Errors\""
+  echo "  $0 \"My Draft Title\" --draft"
+}
+
+for arg in "$@"; do
+  case "$arg" in
+    --draft|-d)
+      draft=true
+      ;;
+    --help|-h)
+      show_usage
+      exit 0
+      ;;
+    *)
+      if [ -z "$title" ]; then
+        title="$arg"
+      else
+        title="$title $arg"
+      fi
+      ;;
+  esac
+done
 
 # ============================================
 # CHECK IF TITLE WAS PROVIDED
@@ -22,9 +53,7 @@ title="$1"
 # If title is empty, show an error and exit
 if [ -z "$title" ]; then
   echo "Error: Please provide a title"
-  echo "Usage: $0 \"Post Title\""
-  echo ""
-  echo "Example: $0 \"Day 3: Functions and Errors\""
+  show_usage
   exit 1
 fi
 
@@ -79,7 +108,17 @@ echo "✓ Image directory created: $img_dir"
 # ============================================
 # Combine the date and slug to make the filename
 # Example: content/learning-log/2026-01-30-day-3-functions.md
-filename="content/learning-log/${date}-${slug}.md"
+target_dir="content/learning-log"
+if [ "$draft" = true ]; then
+  target_dir="content/drafts"
+fi
+
+if ! mkdir -p "$target_dir"; then
+  echo "Error: Could not create target directory $target_dir"
+  exit 1
+fi
+
+filename="${target_dir}/${date}-${slug}.md"
 
 # ============================================
 # CHECK IF FILE ALREADY EXISTS
@@ -102,10 +141,16 @@ fi
 # The front matter is YAML between --- markers
 # 11ty uses this metadata to build the site
 
+draft_line=""
+if [ "$draft" = true ]; then
+  draft_line="draft: true"
+fi
+
 cat > "$filename" << EOF
 ---
 title: "$title"
 date: $date
+$draft_line
 tags:
   - learning-log
 layout: layouts/post.njk
@@ -145,6 +190,9 @@ EOF
 # ============================================
 echo ""
 echo "✓ Created: $filename"
+if [ "$draft" = true ]; then
+  echo "  Draft: true"
+fi
 echo ""
 
 # ============================================

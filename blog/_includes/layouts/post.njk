@@ -3,33 +3,38 @@ layout: layouts/base.njk
 ---
 
 <article>
-	<h1>{{ title }}</h1>
-	<p class="post-meta">
-		<time datetime="{{ page.date | dateFilter }}">
-			{{ page.date | readableDate }}
-		</time>
-	</p>
-
-	{% if tags %}
-		<p class="post-tags">
-			{% for tag in tags %}
-				{% if tag !== "learning-log" %}
-					<a href="/tags/{{ tag | slugify }}/">#{{ tag }}</a>
-				{% endif %}
-			{% endfor %}
+	<section>
+		<h1>{{ title }}</h1>
+		<p>
+			<time datetime="{{ page.date | dateFilter }}">{{ page.date | readableDate }}</time>
+			
+			{% if tags %}
+				&nbsp;·&nbsp;
+				{% for tag in tags %}
+					{% if tag !== "learning-log" %}
+						<a href="/tags/{{ tag | slugify }}/">#{{ tag }}</a>
+					{% endif %}
+				{% endfor %}
+			{% endif %}
 		</p>
-	{% endif %}
+	</section>
 
-	{{ content | safe }}
+	<div>
+		{{ content | safe }}
+	</div>
 
 	{% if previousPost or nextPost %}
-		<nav class="post-nav">
+		<nav style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #e5e7eb; display: flex; justify-content: space-between; gap: 20px;">
 			{% if previousPost %}
-				<a href="{{ previousPost.url | url }}" class="prev">← {{ previousPost.data.title }}</a>
+				<a href="{{ previousPost.url | url }}" style="flex: 1;">← {{ previousPost.data.title }}</a>
 			{% endif %}
 			{% if nextPost %}
-				<a href="{{ nextPost.url | url }}" class="next">{{ nextPost.data.title }} →</a>
+				<a href="{{ nextPost.url | url }}" style="flex: 1; text-align: right;">{{ nextPost.data.title }} →</a>
 			{% endif %}
 		</nav>
 	{% endif %}
 </article>
+
+<p style="margin-top: 40px;">
+	<a href="{{ '/learning-log/' | url }}">← Back to learning log</a>
+</p>
