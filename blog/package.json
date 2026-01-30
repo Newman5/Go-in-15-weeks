@@ -7,7 +7,7 @@
     "build": "npx @11ty/eleventy",
     "start": "npx @11ty/eleventy --serve",
     "debug": "cross-env DEBUG=Eleventy* npx @11ty/eleventy",
-    "blog": "bash ../blog-menu.sh",
+    "blog": "bash ./blog-menu.sh",
     "test:blog": "bash ./scripts/test-blog.sh"
   },
   "engines": {

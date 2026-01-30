@@ -95,7 +95,7 @@ execute_new_post() {
     if [ "$create_draft" = "y" ] || [ "$create_draft" = "Y" ]; then
       draft_flag="--draft"
     fi
-    ./blog/scripts/new-post.sh "$post_title" $draft_flag
+    ./scripts/new-post.sh "$post_title" $draft_flag
     handle_error $? || continue
     break
   done
@@ -113,7 +113,7 @@ execute_new_link() {
       return
     fi
     read -p "Enter description (optional): " link_desc
-    ./blog/scripts/new-link-post.sh "$link_url" "$link_desc"
+    ./scripts/new-link-post.sh "$link_url" "$link_desc"
     handle_error $? || continue
     break
   done
@@ -124,7 +124,7 @@ execute_list_drafts() {
   while true; do
     echo -e "${BOLD}Draft Posts${RESET}"
     echo ""
-    ./blog/scripts/list-drafts.sh
+    ./scripts/list-drafts.sh
     handle_error $? || continue
     break
   done
@@ -141,7 +141,7 @@ execute_edit_draft() {
       sleep 1
       return
     fi
-    ./blog/scripts/edit-draft.sh "$draft_slug"
+    ./scripts/edit-draft.sh "$draft_slug"
     handle_error $? || continue
     break
   done
@@ -158,7 +158,7 @@ execute_publish_draft() {
       sleep 1
       return
     fi
-    ./blog/scripts/publish-draft.sh "$draft_slug"
+    ./scripts/publish-draft.sh "$draft_slug"
     handle_error $? || continue
     break
   done
@@ -169,7 +169,7 @@ execute_check_links() {
   while true; do
     echo -e "${BOLD}Check for Broken Links${RESET}"
     echo ""
-    ./blog/scripts/check-links.sh
+    ./scripts/check-links.sh
     handle_error $? || continue
     break
   done
@@ -180,7 +180,7 @@ execute_stats() {
   while true; do
     echo -e "${BOLD}Blog Statistics${RESET}"
     echo ""
-    ./blog/scripts/post-stats.sh
+    ./scripts/post-stats.sh
     handle_error $? || continue
     break
   done
@@ -192,7 +192,7 @@ execute_summary() {
     echo -e "${BOLD}Generate Monthly Summary${RESET}"
     echo ""
     read -p "Enter month (YYYY-MM) or press Enter for current month: " month_input
-    ./blog/scripts/generate-summary.sh "$month_input"
+    ./scripts/generate-summary.sh "$month_input"
     handle_error $? || continue
     break
   done
@@ -209,7 +209,7 @@ execute_find() {
       sleep 1
       return
     fi
-    ./blog/scripts/find-post.sh "$keyword"
+    ./scripts/find-post.sh "$keyword"
     handle_error $? || continue
     break
   done
@@ -259,7 +259,7 @@ execute_tests() {
   while true; do
     echo -e "${BOLD}Run Blog Smoke Tests${RESET}"
     echo ""
-    ./blog/scripts/test-blog.sh
+    ./scripts/test-blog.sh
     handle_error $? || continue
     break
   done
@@ -372,19 +372,19 @@ if [ -z "$command" ]; then
   interactive_menu
 else
   case "$command" in
-    new) ./blog/scripts/new-post.sh "${@:2}" ;;
-    link) ./blog/scripts/new-link-post.sh "${@:2}" ;;
-    drafts) ./blog/scripts/list-drafts.sh ;;
-    edit) ./blog/scripts/edit-draft.sh "$2" ;;
-    publish) ./blog/scripts/publish-draft.sh "$2" ;;
-    check-links) ./blog/scripts/check-links.sh ;;
-    stats) ./blog/scripts/post-stats.sh ;;
-    summary) ./blog/scripts/generate-summary.sh "$2" ;;
-    find) ./blog/scripts/find-post.sh "$2" ;;
+    new) ./scripts/new-post.sh "${@:2}" ;;
+    link) ./scripts/new-link-post.sh "${@:2}" ;;
+    drafts) ./scripts/list-drafts.sh ;;
+    edit) ./scripts/edit-draft.sh "$2" ;;
+    publish) ./scripts/publish-draft.sh "$2" ;;
+    check-links) ./scripts/check-links.sh ;;
+    stats) ./scripts/post-stats.sh ;;
+    summary) ./scripts/generate-summary.sh "$2" ;;
+    find) ./scripts/find-post.sh "$2" ;;
     build) (cd blog && npm run build) ;;
     dev) (cd blog && npm start) ;;
     deploy) echo "Deploy command not configured yet" ;;
-    test) ./blog/scripts/test-blog.sh ;;
+    test) ./scripts/test-blog.sh ;;
     --help|-h|help) show_help ;;
     *)
       echo "Error: Unknown command '$command'"
