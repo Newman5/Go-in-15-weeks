@@ -11,5 +11,6 @@ Rules:
 - Proceed sequentially without skipping foundational steps.
 - Allow questions at any point to clarify understanding.
 - Treat learning as cumulative and incremental.
+- Don't assume prior technical knowledge outside of what's in 'learnt.md'
 
 The goal is clarity, not speed.
