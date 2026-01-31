@@ -1,0 +1,135 @@
+DAY 4 — Maps and Zero Values
+
+Goal: Learn how Go represents key–value data and how zero values affect program correctness.
+
+---
+
+1. What a Map Is
+
+* A map is a built-in key–value data structure.
+* Keys must be comparable types (e.g. string, int).
+* Values can be any type.
+* Map syntax: map[K]V
+
+Example:
+map[string]int
+
+---
+
+2. Declaring and Creating Maps
+
+* A map must be created before use.
+* A nil map cannot store values.
+
+Valid ways to create maps:
+* make(map[string]int)
+* map[string]int{}
+
+Invalid:
+* var m map[string]int  (nil until make)
+
+Rule:
+A map must be initialized before writing to it.
+
+---
+
+3. Reading From a Map
+
+* Reading a missing key does NOT panic.
+* Missing keys return the zero value of the value type.
+
+Example:
+m["x"] returns 0 if value type is int.
+
+Important:
+You cannot tell if the key existed just from the value.
+
+---
+
+4. The “Comma ok” Pattern
+
+* Used to distinguish “missing key” from “zero value”.
+* Syntax:
+value, ok := m[key]
+
+Rules:
+* ok == true → key exists
+* ok == false → key does not exist
+
+This is mandatory when correctness depends on key presence.
+
+---
+
+5. Writing to a Map
+
+* Assigning to a key inserts or overwrites.
+* There is no append; assignment is the only write operation.
+
+Example:
+m["a"] = 10
+
+If the key already exists, the value is replaced.
+
+---
+
+6. Deleting From a Map
+
+* delete(m, key) removes a key.
+* Deleting a missing key is safe (no error).
+
+delete(m, "x") is always valid.
+
+---
+
+7. Iterating Over a Map
+
+* Use range to iterate.
+* Order is NOT guaranteed.
+* Never rely on iteration order.
+
+Syntax:
+for k, v := range m { ... }
+
+Rule:
+Map iteration order is intentionally randomized.
+
+---
+
+8. Maps Are Reference Types
+
+* Passing a map to a function does NOT copy its contents.
+* All references point to the same underlying data.
+
+Rule:
+You do NOT need pointers to modify a map.
+
+This is different from structs.
+
+---
+
+9. Zero Value of a Map
+
+* The zero value of a map is nil.
+* nil maps can be read from but not written to.
+
+Rule:
+Always initialize maps before writing.
+
+---
+
+10. When to Use Maps vs Slices
+
+Use a map when:
+* You need fast lookup by key
+* Order does not matter
+* Keys are meaningful identifiers
+
+Use a slice when:
+* Order matters
+* You need indexed iteration
+* Duplicates are allowed
+
+---
+
+End of Day 4
+Append key learnings to learnt.txt after completion.

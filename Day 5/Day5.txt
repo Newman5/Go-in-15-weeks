@@ -1,0 +1,51 @@
+DAY 5 — Methods, Interfaces, and Design Boundaries
+
+**Methods**
+* A method is a function with a receiver: `func (r T) Method()`.
+* The receiver can be a value (`T`) or a pointer (`*T`).
+* Use a value receiver when the method does not mutate state.
+* Use a pointer receiver when the method mutates state or to avoid copying.
+* Methods belong to types, not structs only (any named type).
+* Methods allow behavior to be attached to data.
+
+**Value vs Pointer Receivers**
+* Value receiver methods get a copy of the value.
+* Pointer receiver methods can modify the original value.
+* If any method on a type needs a pointer receiver, use pointer receivers consistently.
+* Go automatically takes the address when calling pointer receiver methods on values (when possible).
+
+**Interfaces**
+* An interface defines behavior, not data.
+* An interface is a set of method signatures.
+* A type implements an interface implicitly by implementing its methods.
+* There is no `implements` keyword in Go.
+* Interfaces should be small (often 1–3 methods).
+* Accept interfaces, return concrete types (common Go guideline).
+
+**Interface Values**
+* An interface value has two parts: (type, value).
+* An interface is `nil` only if both parts are `nil`.
+* A non-nil concrete value inside a nil-typed interface is not `nil`.
+
+**Why Interfaces Matter**
+* Interfaces decouple code.
+* They allow substitution and testing (mock implementations).
+* They define contracts between packages.
+* Interfaces enable dependency inversion without frameworks.
+
+**Common Interface Patterns**
+* Standard library interfaces (`io.Reader`, `io.Writer`) are minimal and composable.
+* Define interfaces at the point of use, not where types are defined.
+* Prefer behavior-focused names (`Reader`, `Store`, `Notifier`).
+
+**Design Rules Learned**
+* Data structures hold state.
+* Methods define behavior.
+* Interfaces define boundaries.
+* Functions operate on abstractions, not concrete implementations.
+
+**What You Should Be Able To Do After Day 5**
+* Write methods with correct receiver choice.
+* Define small, focused interfaces.
+* Use interfaces as function parameters.
+* Understand how implicit interface implementation works.
