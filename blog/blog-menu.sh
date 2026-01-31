@@ -266,17 +266,36 @@ execute_tests() {
   pause_for_user
 }
 
+execute_import_days() {
+  while true; do
+    echo -e "${BOLD}Import Day Files as Posts${RESET}"
+    echo ""
+    ./scripts/import-day-files.sh
+    handle_error $? || continue
+    break
+  done
+  pause_for_user
+}
+
 # ============================================
 # INTERACTIVE MENU
 # ============================================
 
 show_menu() {
   show_header
+  echo -e "${GREEN}${BOLD}📄 CONTENT MANAGEMENT${RESET}"
+  echo "  1) ✍️  Create new blog post"
+  echo "  2) 🔗 Create link post"
+  echo "  3) 📋 List drafts"
+  echo "  4) ✏️  Edit draft"
+  echo "  5) 🚀 Publish draft"
+  echo ""
   echo -e "${BLUE}${BOLD}🔧 UTILITIES${RESET}"
   echo "  6) 🔍 Find posts by keyword"
   echo "  7) 🔗 Check for broken links"
   echo "  8) 📊 Show blog statistics"
   echo "  9) 📅 Generate monthly summary"
+  echo "  14) 📥 Import Day files as posts"
   echo ""
   echo -e "${MAGENTA}${BOLD}🏗️  BUILD & DEPLOY${RESET}"
   echo "  10) 🔨 Build site"
@@ -285,13 +304,6 @@ show_menu() {
   echo ""
   echo -e "${CYAN}${BOLD}🧪 TESTING${RESET}"
   echo "  13) ✅ Run blog smoke tests"
-  echo ""
-  echo -e "${GREEN}${BOLD}📄 CONTENT MANAGEMENT${RESET}"
-  echo "  1) ✍️  Create new blog post"
-  echo "  2) 🔗 Create link post"
-  echo "  3) 📋 List drafts"
-  echo "  4) ✏️  Edit draft"
-  echo "  5) 🚀 Publish draft"
   echo ""
   echo -e "${YELLOW}${BOLD}OTHER${RESET}"
   echo "  0) 👋 Exit"
@@ -302,7 +314,7 @@ show_menu() {
 interactive_menu() {
   while true; do
     show_menu
-    read -p "Enter your choice (0-13): " choice
+    read -p "Enter your choice (0-14): " choice
     echo ""
     
     case $choice in
@@ -319,12 +331,13 @@ interactive_menu() {
       11) execute_dev ;;
       12) execute_deploy ;;
       13) execute_tests ;;
+      14) execute_import_days ;;
       0)
         echo -e "${GREEN}👋 Goodbye!${RESET}"
         exit 0
         ;;
       *)
-        echo -e "${RED}Invalid choice. Please enter a number between 0-13.${RESET}"
+        echo -e "${RED}Invalid choice. Please enter a number between 0-14.${RESET}"
         sleep 2
         ;;
     esac
@@ -355,6 +368,7 @@ show_help() {
   echo "  stats                    Show blog statistics"
   echo "  summary [YYYY-MM]        Generate monthly summary"
   echo "  find <keyword>           Search posts by keyword"
+  echo "  import-days              Import Day .txt files as posts"
   echo "  build                    Build the site"
   echo "  dev                      Start development server"
   echo "  deploy                   Deploy to production"
@@ -381,6 +395,7 @@ else
     stats) ./scripts/post-stats.sh ;;
     summary) ./scripts/generate-summary.sh "$2" ;;
     find) ./scripts/find-post.sh "$2" ;;
+    import-days) ./scripts/import-day-files.sh ;;
     build) (npm run build) ;;
     dev) (npm start) ;;
     deploy) echo "Deploy command not configured yet" ;;
