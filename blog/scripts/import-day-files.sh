@@ -73,9 +73,9 @@ for day_dir in "$ROOT_DIR"/Day*; do
     # Build the output filename
     output_file="$OUTPUT_DIR/${today}-day-${day_num}-${slug}.md"
     
-    # Check if file already exists
-    if [ -e "$output_file" ]; then
-      warn "Skipping (already exists): $output_file"
+    # Check if a file with this slug already exists (ignore date prefix)
+    if find "$OUTPUT_DIR" -type f -name "*-day-${day_num}-${slug}.md" -print -quit | grep -q .; then
+      warn "Skipping (already exists): $slug"
       continue
     fi
     
