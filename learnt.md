@@ -85,4 +85,58 @@
 
 ---
 
+**Day 5 — Methods, Receivers, and Interfaces**
+
+* A **method** is a function with a receiver: `func (r T) Method()`.
+* Methods attach behavior to **types**, not to values or pointers.
+* Any named type (not just structs) can have methods.
+* Methods are used when behavior logically belongs to data.
+
+* A **value receiver (`T`)** receives a copy of the value.
+* Value receivers cannot mutate the original value.
+* A **pointer receiver (`*T`)** receives the address of the value.
+* Pointer receivers can mutate the original value.
+* Pointer receivers should be used when a method mutates state or when copying would be expensive.
+* If any method on a type uses a pointer receiver, pointer receivers should be used consistently.
+* Go automatically takes the address when calling pointer-receiver methods on addressable values.
+
+* Method sets are defined per type:
+  * `T` has methods with value receivers.
+  * `*T` has methods with both value and pointer receivers.
+* Pointer-receiver methods cannot be called on non-addressable values (e.g. temporary literals).
+
+* An **interface** defines behavior as a set of method signatures.
+* Interfaces contain no data and no implementation.
+* A type implements an interface **implicitly** by implementing its methods.
+* There is no `implements` keyword in Go.
+* Interfaces should be small and focused.
+* Idiomatic rule: **accept interfaces, return concrete types**.
+
+* Functions can take interfaces as parameters.
+* Any value whose type satisfies the interface can be passed in.
+* Interfaces are primarily used at **boundaries** (APIs, packages, testing).
+* Concrete types are preferred inside packages.
+
+* A single type can implement multiple interfaces.
+* Interface implementation is independent per interface.
+* The same concrete value can be wrapped by multiple interface values.
+
+* An interface value consists of two parts: the concrete type and the concrete value.
+* An interface is `nil` only if both its type and value are `nil`.
+* An interface holding a nil concrete value is not `nil`.
+* Calling a method on such an interface may cause a runtime panic.
+* Practical rule: do not return nil concrete values as interfaces.
+
+* Interfaces decouple code from concrete implementations.
+* Interfaces enable substitution and testing with fake implementations.
+* Interfaces define architectural boundaries without inheritance.
+
+* Structs hold data.
+* Methods define behavior.
+* Pointer receivers control mutation.
+* Interfaces define contracts.
+* Functions operate on abstractions at boundaries.
+
+---
+
 

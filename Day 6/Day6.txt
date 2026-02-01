@@ -1,0 +1,55 @@
+DAY 6 — Concurrency Fundamentals (Goroutines & Channels)
+
+* Concurrency is about dealing with multiple tasks at once; it is not the same as parallelism.
+* Go’s concurrency model is built around **goroutines** and **channels**.
+
+* A **goroutine** is a lightweight, managed thread.
+* A goroutine is started using the `go` keyword: `go f()`.
+* Goroutines run concurrently with the caller.
+* The Go runtime schedules goroutines, not the OS.
+* Creating thousands of goroutines is cheap compared to OS threads.
+
+* The `main` goroutine exits when `main()` returns.
+* When `main` exits, all other goroutines are terminated immediately.
+* Programs must explicitly wait if background goroutines need to finish.
+
+* A **channel** is a typed conduit for communication between goroutines.
+* Channels are created with `make(chan T)`.
+* Sending: `ch <- value`
+* Receiving: `value := <-ch`
+* Send and receive operations block by default.
+
+* Blocking means:
+  * Send blocks until another goroutine receives.
+  * Receive blocks until another goroutine sends.
+
+* Channels are used to **share data by communicating**, not by shared memory.
+* This avoids many data-race problems.
+
+* An **unbuffered channel** has no capacity.
+* Communication happens only when both sender and receiver are ready.
+
+* A **buffered channel** has capacity: `make(chan T, n)`.
+* Sending blocks only when the buffer is full.
+* Receiving blocks only when the buffer is empty.
+* Buffered channels decouple sender and receiver timing.
+
+* Channels have a direction:
+  * `chan T` — send and receive
+  * `chan<- T` — send-only
+  * `<-chan T` — receive-only
+* Directional channels are used to restrict API usage.
+
+* Closing a channel signals that no more values will be sent.
+* `close(ch)` can only be called by the sender.
+* Receiving from a closed channel yields zero values after buffer drain.
+* The “comma ok” form detects closure: `v, ok := <-ch`.
+
+* Channels should not be used like queues unless clearly intended.
+* Do not close a channel from the receiver side.
+* Do not send on a closed channel (runtime panic).
+
+* Goroutines define concurrency.
+* Channels define synchronization and communication.
+* Correct Go concurrency relies on clear ownership and communication rules.
+
