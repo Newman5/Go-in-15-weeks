@@ -26,6 +26,11 @@ npm run build
 ```
 
 Output is in `_site/`
+## Using the Blog Menu 
+
+```bash
+./blog-menu.sh 
+```
 
 ## Using the Blog CLI (Phase 1)
 
