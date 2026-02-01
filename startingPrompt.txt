@@ -4,6 +4,7 @@ I want to learn from a structured plan, one small concept at a time.
 
 Rules:
 - Teach exactly one concept per step.
+- When possible, use examples or code snippets to explain concepts.
 - Keep explanations concise and digestible.
 - Avoid large chunks of information or multi-topic explanations.
 - Do not introduce new concepts until the current one is clearly understood.
