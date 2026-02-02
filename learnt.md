@@ -139,4 +139,86 @@
 
 ---
 
+**Day 6 — Concurrency Fundamentals (Goroutines & Channels)**
+
+* **Concurrency** is about structuring a program to handle multiple tasks that overlap in time.
+* **Parallelism** is about executing tasks simultaneously on multiple CPU cores.
+* Concurrency does **not** require parallel hardware; parallelism is optional.
+
+* Every Go program starts with exactly **one goroutine**: the **main goroutine**.
+* The main goroutine runs `main()`.
+* When `main()` returns, the **entire program exits immediately**.
+* All other goroutines are terminated when the main goroutine exits.
+* Goroutines do **not** keep a program alive on their own.
+
+* A **goroutine** is a lightweight unit of execution managed by the Go runtime.
+* New goroutines are started explicitly using the `go` keyword: `go f()`.
+* Without `go`, a function runs in the current goroutine.
+* Goroutines are cheap compared to OS threads and are scheduled by the Go runtime.
+
+* **Blocking** means a goroutine pauses execution until a condition is met.
+* Blocking affects **only the goroutine performing the operation**, not the whole program.
+* Blocking is how Go coordinates concurrent work safely.
+
+* A **channel** is a typed conduit used to communicate between goroutines.
+* Channels are created with `make(chan T)`.
+* Sending syntax: `ch <- value`
+* Receiving syntax: `value := <-ch`
+* Send and receive operations **block by default**.
+
+* **Unbuffered channels** have no capacity.
+* A send blocks until a receive happens.
+* A receive blocks until a send happens.
+* Unbuffered channels provide **synchronization (handshake)** between goroutines.
+
+* **Buffered channels** have capacity: `make(chan T, n)`.
+* Sending blocks only when the buffer is full.
+* Receiving blocks only when the buffer is empty.
+* Buffered channels **decouple sender and receiver timing**.
+* A buffered channel with capacity 1 is **not the same** as an unbuffered channel.
+
+* Channels are used to **share data by communicating**, not by shared memory.
+* This avoids data races and makes ownership explicit.
+
+* Goroutines often require explicit waiting.
+* A common waiting pattern uses a **signal channel** (e.g. `done`).
+* The empty struct type `struct{}` is used for signals because it carries no data.
+* `struct{}` is a type; `struct{}{}` is its only value.
+
+* Receiving without assignment (`<-ch`) is valid when only blocking/synchronization matters.
+* Receiving a value without `ok` discards closure information.
+
+* **Closing a channel** signals that no more values will be sent.
+* Closing is a **state change**, not a send.
+* Only the goroutine responsible for sending values should close the channel (convention).
+* Sending on a closed channel causes a runtime panic.
+* Closing a channel unblocks all receivers.
+* Receiving from a closed channel yields zero values **after buffered values are drained**.
+
+* The **comma-ok** form (`v, ok := <-ch`) detects channel closure.
+  * `ok == true` → real value received
+  * `ok == false` → channel closed and empty
+
+* Ranging over a channel (`for v := range ch`) receives values until the channel is closed.
+* `range` blocks waiting for values.
+* `range` exits only when the channel is closed.
+* If a channel is never closed, `range` never terminates.
+
+* Channel **direction** can restrict usage:
+  * `chan T` — send and receive
+  * `chan<- T` — send-only
+  * `<-chan T` — receive-only
+* Direction is a **type restriction at the usage site**, not a property of the channel itself.
+* Directional channels are commonly used at function boundaries to enforce correctness.
+
+* Sending and receiving on an unbuffered channel in the **same goroutine** causes deadlock.
+* Unbuffered channel operations that must rendezvous require **multiple goroutines**.
+
+* Goroutines define concurrency.
+* Channels define synchronization and communication.
+* Correct Go concurrency relies on clear ownership, blocking, and explicit signaling.
+
+---
+
+
 
