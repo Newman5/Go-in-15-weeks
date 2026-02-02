@@ -1,0 +1,333 @@
+week1exercises.txt
+
+WEEK 1 — CONSOLIDATION EXERCISES (MIXED, REAL-SCENARIO)
+
+Rules
+- Each exercise intentionally mixes multiple concepts (errors, slices, pointers, maps, interfaces, concurrency).
+- Write code for ALL coding exercises.
+- For each exercise: write a short “Design Notes” paragraph explaining your choices (types, ownership, error strategy).
+- No sleeps for synchronization unless explicitly allowed.
+- Run: go test ./... and for concurrency tasks also run: go test -race ./... (or go run -race . where appropriate).
+
+------------------------------------------------------------
+EXERCISE 1 — INVENTORY LEDGER (slices + structs + errors + mutation)
+------------------------------------------------------------
+
+Scenario:
+You have an inventory of Items and a stream of operations that modify it.
+
+Data model:
+- type Item { ID int; Name string; Count int }
+- type Op { ID int; Delta int } // Delta can be negative (remove stock) or positive (add stock)
+
+Task:
+Implement:
+1) func ApplyOps(items []Item, ops []Op) (updated []Item, applied int, err error)
+   Requirements:
+   - If items is empty -> error
+   - For each Op:
+     - If item ID not found -> return error including the missing ID
+     - If applying Delta would make Count < 0 -> return error (do NOT allow negative stock)
+     - Otherwise apply the change
+   - Must return:
+     - updated slice (even if you modify in place, still return it)
+     - number of operations applied successfully before the failure
+     - error if any
+
+Constraints:
+- Use index-based iteration for mutation, not range-value.
+- Explain in Design Notes:
+  - Why modifying elements works without pointer-to-slice
+  - When returning updated slice matters (append / reallocation concerns)
+
+Extra:
+Add support for “auto-create missing item” via a boolean parameter:
+2) func ApplyOpsWithCreate(items []Item, ops []Op, createMissing bool) ([]Item, int, error)
+   If createMissing is true:
+   - Create a new item with Name "UNKNOWN" and Count starting at 0, then apply Delta (still cannot go negative)
+
+------------------------------------------------------------
+EXERCISE 2 — COUNTER SERVICE (interfaces + method sets + nil traps)
+------------------------------------------------------------
+
+Scenario:
+You want to count events, but you want the counting mechanism swappable.
+
+Define:
+- type Counter interface { Inc(key string); Get(key string) int }
+
+Implement:
+A) MapCounter using map[string]int internally.
+   - Must be safe to use even if the map starts nil (initialize properly).
+   - Provide methods with correct receiver types.
+
+B) FakeCounter for testing:
+   - Records calls to Inc (e.g., last key, number of calls).
+   - Returns configurable values from Get.
+
+Write:
+- func RecordLogin(c Counter, userID string) // increments "login:<userID>"
+- A small test (or main demo) that shows:
+  - You can pass both MapCounter and FakeCounter into RecordLogin
+  - You can validate FakeCounter was called as expected
+
+Text Questions:
+1) Why should RecordLogin accept the interface, not the concrete type?
+2) Explain method sets: which methods exist on T vs *T for your MapCounter.
+3) Explain the “interface holding nil concrete value is not nil” problem in your own words.
+   Then: create a minimal code snippet that demonstrates it (no panics required, just show the nil comparison).
+
+------------------------------------------------------------
+EXERCISE 3 — LOGGING PIPELINE (channels + blocking + closure + range)
+------------------------------------------------------------
+
+Scenario:
+You have a producer generating log lines and a consumer printing them.
+
+Implement:
+- func ProduceLogs(out chan<- string, n int)
+  - Sends n log lines like: "log #<i>"
+  - Closes the channel when done (only producer closes)
+
+- func ConsumeLogs(in <-chan string) int
+  - Ranges over the channel
+  - Prints each line (or store them; printing is fine)
+  - Returns how many lines consumed
+
+Main:
+- Wire producer + consumer with an unbuffered channel.
+- Ensure program exits only after consumer completes.
+
+Constraints:
+- No WaitGroup here. Use the channel closing + range termination for lifecycle.
+- Explain in Design Notes:
+  - Why ranging a channel terminates only on close
+  - What happens if you forget to close
+
+Extra:
+Repeat with a buffered channel of capacity 3 and explain what changes and what does not.
+
+------------------------------------------------------------
+EXERCISE 4 — CONCURRENT URL CHECKER (goroutines + WaitGroup + mutex OR channels + errors)
+------------------------------------------------------------
+
+Scenario:
+You receive a list of URLs and want to fetch them concurrently (HEAD or GET).
+You must report which succeeded vs failed.
+
+Implement:
+- type Result struct { URL string; Status int; Err error }
+
+Write:
+- func CheckURLs(urls []string) []Result
+
+Requirements:
+- Spawn one goroutine per URL.
+- Must wait for all results before returning.
+- Must not data race.
+- Must return results for every URL, even if some fail.
+
+Choose ONE approach (your choice, but justify):
+A) Channels-only:
+   - Results channel
+   - One goroutine collects results
+
+B) Shared slice + mutex:
+   - Pre-size results slice
+   - Each goroutine writes into its index with mu.Lock()
+
+Constraints:
+- No sleeps.
+- Use net/http with a client timeout (use timeouts, not infinite hangs).
+- Explain in Design Notes:
+  - Why your approach is race-free
+  - Why WaitGroup solves lifecycle but not memory safety
+  - Where select could be used (even if you don’t implement it here)
+
+Extra:
+Add optional early cancel:
+- If more than K failures happen, cancel remaining requests using context.
+(If you skip this: explain how you would do it.)
+
+------------------------------------------------------------
+EXERCISE 5 — BANK LEDGER (maps + errors + pointer receivers + invariants)
+------------------------------------------------------------
+
+Scenario:
+You are tracking balances per account ID.
+
+Define:
+- type Ledger struct { balances map[string]int }
+
+Implement methods:
+- func NewLedger() *Ledger // initializes internal map
+- func (l *Ledger) Deposit(acct string, amount int) error
+- func (l *Ledger) Withdraw(acct string, amount int) error
+- func (l *Ledger) Balance(acct string) (int, bool)
+
+Rules:
+- amount must be > 0 else error
+- account must exist before withdraw (no implicit creation)
+- withdraw must not make balance negative
+- Balance returns (value, ok) using comma-ok logic on map
+
+Text Questions:
+1) Why must balances be initialized before writes?
+2) Why is a pointer receiver appropriate for Deposit/Withdraw?
+3) What does len(map) tell you and what does it not tell you?
+
+------------------------------------------------------------
+EXERCISE 6 — PARSER + VALIDATION (errors + custom error messages + early returns)
+------------------------------------------------------------
+
+Scenario:
+You receive lines like:
+"<id>,<name>,<count>"
+Example: "12,Widget,30"
+
+Implement:
+- func ParseItems(lines []string) ([]Item, error)
+
+Rules:
+- Empty lines are errors (include line index in error)
+- id must parse to int
+- count must parse to int and must be >= 0
+- name must be non-empty
+
+Constraints:
+- Use early returns on error.
+- Errors must be specific (line number + why).
+- Demonstrate that parsing returns a slice of Items.
+
+Extra:
+Return partial results + error:
+- func ParseItemsPartial(lines []string) (items []Item, parsed int, err error)
+
+------------------------------------------------------------
+EXERCISE 7 — WORK QUEUE (channels + worker pool + WaitGroup + close discipline)
+------------------------------------------------------------
+
+Scenario:
+You have jobs to process, each job produces a result.
+
+Define:
+- type Job struct { ID int; Payload int }
+- type Out struct { ID int; Value int; Err error }
+
+Task:
+Implement:
+- func RunWorkers(jobs []Job, workerCount int) []Out
+
+Requirements:
+- One goroutine feeds jobs into a jobs channel then closes it.
+- workerCount goroutines read from jobs channel, process, send Out to results channel.
+- One goroutine closes results channel ONLY after all workers complete (use WaitGroup).
+- Main collector ranges results channel into a slice.
+
+Processing rule:
+- If Payload is negative -> Err
+- Else Value = Payload * 2
+
+Constraints:
+- Correct close ownership (senders close, not receivers).
+- Must not deadlock.
+
+Text Questions:
+1) Why can’t workers close the jobs channel?
+2) Why must results be closed after workers finish?
+3) What breaks if you close results too early?
+
+------------------------------------------------------------
+EXERCISE 8 — SELECT: TIMEOUT OR CANCEL (select + timeouts + correctness)
+------------------------------------------------------------
+
+Scenario:
+You want to wait for a result but give up if it takes too long.
+
+Implement:
+- func FirstResult(a, b <-chan int, timeout time.Duration) (int, error)
+
+Rules:
+- If a receives first -> return it
+- If b receives first -> return it
+- If timeout hits first -> return error
+- If both are ready at the same time, behavior is nondeterministic (acknowledge that)
+
+Write a small demo:
+- Start goroutines that send to a and b after different delays.
+- Show timeout path and success path.
+
+Text Questions:
+1) What does select solve that a normal receive does not?
+2) Why is nondeterminism acceptable here?
+
+------------------------------------------------------------
+EXERCISE 9 — MUTATION TRAP CHECK (range copies + pointers + real bug fix)
+------------------------------------------------------------
+
+Scenario:
+You receive a slice of Items and you must apply a discount-like change (Count adjustment).
+
+Write a broken function first:
+- func BadApplyDelta(items []Item, delta int)
+  - Uses: for _, it := range items { it.Count += delta }
+
+Demonstrate in main/test that it does NOT work.
+
+Then write the fix:
+- func ApplyDelta(items []Item, delta int)
+  - Must mutate correctly
+
+Explain in Design Notes:
+- Why the range value is a copy
+- Why index iteration fixes it
+
+------------------------------------------------------------
+EXERCISE 10 — FINAL “SYSTEM” INTEGRATION (packages + interfaces + tests)
+------------------------------------------------------------
+
+Scenario:
+Create a tiny, realistic layout with packages.
+
+Create a module with this structure:
+- /cmd/app/main.go
+- /internal/store/store.go
+- /internal/service/service.go
+
+Requirements:
+- store package defines:
+  - type Store interface { Get(id int) (Item, bool); Put(Item) error }
+  - InMemoryStore implementation with a map
+- service package defines:
+  - type Service struct { store Store }
+  - func (s Service) AddStock(id int, delta int) error
+    - Must validate delta > 0
+    - Must error if item not found
+    - Must update item and store it back
+
+Main:
+- Initializes store + service
+- Adds one item
+- Calls AddStock and prints results
+
+Tests:
+- Write at least 2 unit tests for service using a FakeStore.
+  - One success
+  - One error path
+
+Text Questions:
+1) Why define Store interface at the point of use?
+2) Why return concrete types but accept interfaces?
+3) What boundaries did you create and why?
+
+------------------------------------------------------------
+CLOSING CHECKLIST (must answer in writing)
+------------------------------------------------------------
+
+1) Explain concurrency vs parallelism.
+2) Give one scenario where channels are better than mutexes.
+3) Give one scenario where mutexes are simpler than channels.
+4) What does the race detector prove, and what does it not prove?
+5) In one paragraph: what Go rule surprised you the most and why?
+
+END OF week1exercises.txt

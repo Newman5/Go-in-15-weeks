@@ -1,0 +1,220 @@
+WEEK 1 — CONSOLIDATION EXERCISES (GO)
+
+Goal:
+Verify that Go fundamentals, value semantics, interfaces, and concurrency are understood well enough to apply in real systems.
+
+Instructions:
+- Do NOT rush.
+- Write code for all coding exercises.
+- Answer text questions in writing.
+- If you cannot explain something clearly, revisit the concept and retry.
+
+--------------------------------------------------
+SECTION 1 — PROGRAM STRUCTURE & EXECUTION
+--------------------------------------------------
+
+1. Explain in your own words:
+   - What happens when you run `go run main.go`?
+   - What happens when you run `go build`?
+   - Why does Go require `package main` and `func main()`?
+
+2. Write a small program that:
+   - Prints something
+   - Calls a function defined in another file in the same directory
+   - Explain why no import is needed between files in the same package
+
+3. Text question:
+   - Why should `main()` not contain business logic?
+   - What problems arise if it does?
+
+--------------------------------------------------
+SECTION 2 — FUNCTIONS, RETURNS, AND ERRORS
+--------------------------------------------------
+
+4. Write a function that:
+   - Takes a slice of ints
+   - Returns (sum, average, error)
+   - Returns an error for empty input
+
+5. Refactor the function so:
+   - Error handling happens early
+   - `main()` only handles printing
+
+6. Text question:
+   - Why are errors returned as values in Go?
+   - Why is `panic` not used for normal error handling?
+
+--------------------------------------------------
+SECTION 3 — SLICES, VALUES, AND MUTATION
+--------------------------------------------------
+
+7. Write a function that:
+   - Modifies elements of a slice
+   - Demonstrates that the caller sees the changes
+
+8. Write a function that:
+   - Appends to a slice
+   - Demonstrates when the caller does NOT see the change
+
+9. Fix the above by:
+   - Returning the updated slice
+   - Explain why this is required
+
+10. Text questions:
+    - What is inside a slice descriptor?
+    - Why is `[]T` preferred over `*[]T` in most cases?
+
+--------------------------------------------------
+SECTION 4 — STRUCTS AND POINTERS
+--------------------------------------------------
+
+11. Define a struct representing a domain object (e.g., User, Order, Item).
+
+12. Write two functions:
+    - One that takes the struct by value
+    - One that takes a pointer to the struct
+
+13. Demonstrate:
+    - Which function can mutate the original value
+    - Which cannot
+
+14. Text question:
+    - When should you choose a pointer receiver over a value receiver?
+
+--------------------------------------------------
+SECTION 5 — MAPS AND ZERO VALUES
+--------------------------------------------------
+
+15. Create a map and:
+    - Read from it before initialization
+    - Write to it before initialization
+    - Observe and explain the behavior
+
+16. Write a function that:
+    - Safely reads from a map
+    - Uses the comma-ok idiom
+
+17. Text questions:
+    - Why are maps reference types?
+    - Why is iteration order undefined?
+
+--------------------------------------------------
+SECTION 6 — METHODS AND RECEIVERS
+--------------------------------------------------
+
+18. Attach methods to a struct:
+    - One value receiver
+    - One pointer receiver
+
+19. Show:
+    - Which methods belong to `T`
+    - Which belong to `*T`
+
+20. Text questions:
+    - What is a method set?
+    - Why does `*T` have more methods than `T`?
+
+--------------------------------------------------
+SECTION 7 — INTERFACES (CRITICAL)
+--------------------------------------------------
+
+21. Define a small interface representing behavior (e.g., Notifier, Store).
+
+22. Create:
+    - One real implementation
+    - One fake implementation for testing
+
+23. Write a function that:
+    - Accepts the interface
+    - Does not depend on concrete types
+
+24. Text questions:
+    - What does it mean that interfaces are implemented implicitly?
+    - Why should interfaces be defined at the point of use?
+
+25. Explain clearly:
+    - What an interface value contains internally
+    - Why an interface holding a nil concrete value is NOT nil
+
+--------------------------------------------------
+SECTION 8 — GOROUTINES AND BLOCKING
+--------------------------------------------------
+
+26. Write a program that:
+    - Launches a goroutine
+    - Exits too early
+    - Fix it so the goroutine completes
+
+27. Write a program that:
+    - Deadlocks using an unbuffered channel
+    - Explain why it deadlocks
+
+28. Fix the deadlock using:
+    - A second goroutine
+
+29. Text questions:
+    - What does blocking mean in Go?
+    - Why doesn’t a goroutine keep a program alive?
+
+--------------------------------------------------
+SECTION 9 — CHANNELS AND CLOSING
+--------------------------------------------------
+
+30. Write a program where:
+    - One goroutine sends values
+    - Another receives them using `range`
+
+31. Close the channel correctly and explain:
+    - Who should close a channel
+    - Why receivers should not close it
+
+32. Demonstrate:
+    - Receiving from a closed channel
+    - Using the comma-ok form
+
+--------------------------------------------------
+SECTION 10 — WAITGROUPS, SELECT, AND MUTEX
+--------------------------------------------------
+
+33. Write a program that:
+    - Starts multiple goroutines
+    - Uses a WaitGroup to wait for completion
+
+34. Write a program that:
+    - Uses a mutex to protect shared state
+    - Remove the mutex and run with `-race`
+    - Observe the race detector output
+
+35. Write a small example using `select`:
+    - Two channels
+    - Whichever responds first is handled
+
+36. Text questions:
+    - What problem does a WaitGroup solve?
+    - What problem does a mutex solve?
+    - Why does `select` introduce nondeterminism?
+
+--------------------------------------------------
+SECTION 11 — FINAL CONSOLIDATION QUESTIONS
+--------------------------------------------------
+
+37. Explain in your own words:
+    - Difference between concurrency and parallelism
+
+38. Explain:
+    - When to use channels
+    - When to use mutexes
+
+39. Describe a real-world scenario where:
+    - Interfaces help testing
+    - Goroutines improve performance
+    - Mutexes prevent corruption
+
+40. Final reflection (write honestly):
+    - Which topic is still fuzzy?
+    - Which topic feels solid?
+    - What did Go force you to think differently about?
+
+--------------------------------------------------
+END OF WEEK 1 EXERCISES
+--------------------------------------------------
