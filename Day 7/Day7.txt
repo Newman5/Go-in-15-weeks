@@ -1,0 +1,55 @@
+Day 7 — Concurrency Control & Coordination (WaitGroups, select, mutex)
+
+* Goroutines run independently; the main goroutine must explicitly wait for them.
+* Waiting is a coordination problem, not a timing problem.
+* Sleeping to wait for goroutines is incorrect and unreliable.
+
+* sync.WaitGroup is used to wait for a collection of goroutines to finish.
+* A WaitGroup has an internal counter.
+* wg.Add(n) increments the counter.
+* Each goroutine must call wg.Done() exactly once.
+* wg.Done() decrements the counter by 1.
+* wg.Wait() blocks until the counter reaches zero.
+* wg.Wait() must be called by the goroutine that needs to wait (often main).
+* wg.Add() should be called before starting goroutines.
+* Calling wg.Add() after goroutines start can cause race conditions.
+* WaitGroups are for waiting only, not for passing data.
+
+* Channels are preferred for data flow; WaitGroups are for lifecycle coordination.
+* It is common to use both together:
+  * channels for results
+  * WaitGroup for completion
+
+* The select statement waits on multiple channel operations.
+* select chooses one ready case at random if multiple are ready.
+* If no case is ready, select blocks.
+* select with a default case never blocks.
+* default is used for non-blocking checks or timeouts.
+* select is the core tool for multiplexing concurrent signals.
+
+* time.After(d) returns a channel that delivers a value after duration d.
+* time.After is commonly used with select to implement timeouts.
+
+* A mutex (sync.Mutex) protects shared memory.
+* A mutex enforces mutual exclusion: only one goroutine can access a critical section at a time.
+* Lock before accessing shared data; unlock after.
+* Forgetting to unlock causes deadlock.
+* Locking twice in the same goroutine causes deadlock.
+* Mutexes protect data; they do not coordinate completion.
+* Use mutexes only when shared memory is unavoidable.
+* Prefer channels over mutexes when possible.
+
+* Data race: two goroutines access the same variable concurrently, at least one is a write, without synchronization.
+* Data races cause undefined behavior.
+* The Go race detector detects data races at runtime.
+* Run it with: go test -race or go run -race main.go
+
+* sync.WaitGroup: lifecycle coordination
+* channels: communication and synchronization
+* select: multiplexing and control flow
+* mutex: shared memory protection
+* race detector: correctness verification
+
+* Rule of thumb:
+  * Share memory by communicating (channels)
+  * Only use mutexes when sharing memory is unavoidable

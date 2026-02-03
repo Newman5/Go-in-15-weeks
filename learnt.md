@@ -220,5 +220,67 @@
 
 ---
 
+**Day 7 — Concurrency Control & Coordination**
+
+* Concurrency introduces two separate problems: **correctness** (safe memory access) and **lifecycle** (knowing when work is finished).
+* These problems are orthogonal and require different tools.
+
+* `sync.WaitGroup` solves a **waiting / lifecycle** problem.
+* A WaitGroup lets one goroutine (usually `main`) wait until a fixed number of goroutines have finished.
+* Internally, a WaitGroup maintains a counter.
+* `wg.Add(n)` increments the counter by `n`.
+* Each goroutine must call `wg.Done()` exactly once to decrement the counter.
+* `wg.Wait()` blocks until the counter reaches zero.
+* `wg.Add()` must be called before goroutines start.
+* A WaitGroup does **not** protect shared memory and does **not** make code safe.
+* A WaitGroup only ensures the program does not demonstrate incomplete results or exit early.
+
+* `select` is used when a goroutine must wait on **multiple possible events** and react to whichever happens first.
+* `select` blocks until one case is ready.
+* If multiple cases are ready simultaneously, Go chooses one non-deterministically.
+* This non-determinism is intentional and prevents hidden timing assumptions.
+* `select` is not a replacement for `WaitGroup`.
+* `select` is not used for ordering or correctness.
+* `select` is primarily used for cancellation, timeouts, and multiplexing signals.
+* If a goroutine waits on only one thing, `select` is unnecessary.
+* `select` becomes necessary when waiting must be interruptible (e.g., shutdown, timeout).
+
+* A `sync.Mutex` solves a **memory correctness** problem.
+* A mutex ensures only one goroutine accesses a critical section at a time.
+* A data race occurs when:
+  * two or more goroutines access the same variable concurrently
+  * at least one access is a write
+  * and no synchronization is used
+* Data races cause undefined behavior, even if results “look correct”.
+* `mu.Lock()` must be called before accessing shared data.
+* `mu.Unlock()` must be called after.
+* Forgetting to unlock or locking twice in the same goroutine causes deadlock.
+* Mutexes do not wait for goroutines to finish.
+* Mutexes do not coordinate execution order.
+* Mutexes only protect memory.
+
+* Mutexes and WaitGroups are commonly used together:
+  * mutex → correctness of shared data
+  * waitgroup → completeness of execution
+* Using one does not replace the other.
+
+* Channels coordinate **communication and ownership**.
+* Mutexes protect **shared state**.
+* Idiomatic rule:
+  * Share memory by communicating when possible.
+  * Use mutexes only when shared memory is unavoidable.
+
+* The Go race detector can detect data races at runtime.
+* Run with: `go run -race main.go` or `go test -race`.
+* If the race detector reports an issue, the program is incorrect regardless of output.
+
+* Correct concurrent programs require:
+  * proper synchronization (mutex or channels)
+  * explicit waiting (WaitGroup or equivalent)
+  * no reliance on timing or sleeps
+
+--- 
+
+
 
 
