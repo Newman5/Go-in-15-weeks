@@ -205,6 +205,21 @@ echo ""
 #
 # Users can set their editor with: export EDITOR=nano
 # Or add it to their ~/.bashrc file
+if [ -z "$EDITOR" ]; then
+  echo "Which editor do you want to use?"
+  echo "1) code (VS Code)"
+  echo "2) nano"
+  echo "3) vim"
+  echo "4) Other (type command)"
+  read -p "Choose [1-4]: " editor_choice
+  case "$editor_choice" in
+    1) EDITOR="code" ;;
+    2) EDITOR="nano" ;;
+    3) EDITOR="vim" ;;
+    4) read -p "Enter editor command: " EDITOR ;;
+    *) EDITOR="code" ;;
+  esac
+fi
 
 # Check if EDITOR is set, otherwise use code (VS Code)
 if [ -n "$EDITOR" ]; then
